@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "Host-Grotesk";
+    src: url("./assets/font/HostGrotesk-Regular.ttf");
+    font-weight: 400;
+}
+
+body {
+    font-family: "Host-Grotesk", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+button {
+    cursor: pointer;
+}
+
+@theme {
+    --color-borderGray: #CECECE;
+    --color-lightGray: #f1f1f1;
+}
