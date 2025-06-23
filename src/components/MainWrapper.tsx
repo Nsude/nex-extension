@@ -10,9 +10,32 @@ interface Props {
 }
 
 
-const MainWrapper = ({selectedTab, profile}: Props) => {
+const MainWrapper = ({ selectedTab, profile }: Props) => {
   const [addedProfiles, setAddedProfiles] = useState<Profile[]>([]);
-  const [status, setStatus] = useState({isLoading: false, isComplete: false});
+  const [status, setStatus] = useState({ isLoading: false, isComplete: false });
+
+  useEffect(() => {
+    if (!profile || selectedTab !== tabs[0].label) return;
+
+    chrome.storage.local.get(['addedProfiles'], (response) => {
+      const added = response.addedProfiles || [];
+      const isAlreadyAdded = added.find((item: Profile) => item.name === profile.name);
+
+      if (isAlreadyAdded) {
+        setStatus({ isComplete: true, isLoading: false });
+      } else {
+        setStatus({ isComplete: false, isLoading: false });
+      }
+    });
+  }, [profile, selectedTab]);
+
+  // Hide checkmarks when on the "added" tab
+  useEffect(() => {
+    if (selectedTab === tabs[1].label) {
+      setStatus({ isComplete: false, isLoading: false });
+    }
+  }, [selectedTab]);
+
 
   // load added profiles
   useEffect(() => {
@@ -28,8 +51,8 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
 
     const isAdded = addedProfiles.find(item => item.name === profile?.name);
     if (isAdded) return;
-    setStatus({isComplete: false, isLoading: true});
-    
+    setStatus({ isComplete: false, isLoading: true });
+
     chrome.storage.local.get(['addedProfiles'], (response) => {
       let updatedProfileList;
       if (response.addedProfiles) {
@@ -37,31 +60,33 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
       } else {
         updatedProfileList = [profile];
       };
-      
+
       setAddedProfiles(updatedProfileList);
-      chrome.storage.local.set({addedProfiles: updatedProfileList});
+      chrome.storage.local.set({ addedProfiles: updatedProfileList });
     })
 
     setTimeout(() => {
-      setStatus({isComplete: true, isLoading: false});
+      setStatus({ isComplete: true, isLoading: false });
     }, 2000)
   }
 
-  // const testProfile = {name: "Nsude Meshach", company: "The Next One", title: "Design Engineer"}
-  
   return (
     <div className="w-full pt-[25px]">
       {/* current profile */}
       {selectedTab === tabs[0].label && (
         profile ? (
           <div>
-            <ProfileCard 
-              profile={profile} 
-              isLoading={status.isLoading}  
-              isComplete={status.isComplete}/>
+            <ProfileCard
+              profile={profile}
+              isLoading={status.isLoading}
+              isComplete={status.isComplete} />
 
             <span className="absolute bottom-[20px] left-[20px]">
-              <CustomButton label="Add Profile" profile={profile} handleClick={handleAddProfile} />
+              <CustomButton 
+                label="Add Profile" 
+                profile={profile} 
+                isAlreadyAdded={status.isComplete}
+                handleClick={handleAddProfile} />
             </span>
           </div>
         ) : (
@@ -81,13 +106,13 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
       {selectedTab === tabs[1].label && (
         addedProfiles.length > 0 ? (
           <div className="flex flex-col gap-y-[20px] w-full h-[258px] overflow-y-scroll">
-            {addedProfiles.map((item, i) => (
+            {addedProfiles.slice().reverse().map((item, i) => (
               <div className="relative mt-[20px] added-profile-card"
                 key={'profile_' + (i + 1)}>
-                <ProfileCard 
-                  profile={item} 
-                  isLoading={status.isLoading}  
-                  isComplete={status.isComplete}/>
+                <ProfileCard
+                  profile={item}
+                  isLoading={status.isLoading}
+                  isComplete={status.isComplete} />
 
                 <span className="h-[1px] w-[95%] absolute bottom-[-20px] left-0 bg-borderGray/50 profile-border" />
               </div>
@@ -112,7 +137,7 @@ export default MainWrapper;
 interface ProfileProps extends statusIconProps {
   profile: Profile;
 }
-const ProfileCard = ({profile, isLoading, isComplete}: ProfileProps) => {
+const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
   return (
     <div className="relative flex flex-row gap-x-[10px]">
       <div className="bg-lightGray rounded-[4px] min-w-[60px] w-[60px] aspect-square flex justify-center items-center">
