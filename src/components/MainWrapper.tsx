@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { tabs, type Profile } from "../App";
 import ProfileIcon from "../assets/icons/ProfileIcon";
 import CustomButton from "./CustomButton";
+import StatusIcon, { type statusIconProps } from "../assets/icons/StatusIcon";
 
 interface Props {
   selectedTab: string;
@@ -11,6 +12,7 @@ interface Props {
 
 const MainWrapper = ({selectedTab, profile}: Props) => {
   const [addedProfiles, setAddedProfiles] = useState<Profile[]>([]);
+  const [status, setStatus] = useState({isLoading: false, isComplete: false});
 
   // load added profiles
   useEffect(() => {
@@ -23,10 +25,10 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
 
   const handleAddProfile = () => {
     if (!profile) return;
-    
+
     const isAdded = addedProfiles.find(item => item.name === profile?.name);
     if (isAdded) return;
-    
+    setStatus({isComplete: false, isLoading: true});
     
     chrome.storage.local.get(['addedProfiles'], (response) => {
       let updatedProfileList;
@@ -40,7 +42,12 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
       chrome.storage.local.set({addedProfiles: updatedProfileList});
     })
 
+    setTimeout(() => {
+      setStatus({isComplete: true, isLoading: false});
+    }, 2000)
   }
+
+  // const testProfile = {name: "Nsude Meshach", company: "The Next One", title: "Design Engineer"}
   
   return (
     <div className="w-full pt-[25px]">
@@ -48,7 +55,11 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
       {selectedTab === tabs[0].label && (
         profile ? (
           <div>
-            <ProfileCard profile={profile} />
+            <ProfileCard 
+              profile={profile} 
+              isLoading={status.isLoading}  
+              isComplete={status.isComplete}/>
+
             <span className="absolute bottom-[20px] left-[20px]">
               <CustomButton label="Add Profile" profile={profile} handleClick={handleAddProfile} />
             </span>
@@ -73,7 +84,11 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
             {addedProfiles.map((item, i) => (
               <div className="relative mt-[20px] added-profile-card"
                 key={'profile_' + (i + 1)}>
-                <ProfileCard profile={item} />
+                <ProfileCard 
+                  profile={item} 
+                  isLoading={status.isLoading}  
+                  isComplete={status.isComplete}/>
+
                 <span className="h-[1px] w-[95%] absolute bottom-[-20px] left-0 bg-borderGray/50 profile-border" />
               </div>
             ))}
@@ -94,12 +109,12 @@ const MainWrapper = ({selectedTab, profile}: Props) => {
 
 export default MainWrapper;
 
-interface ProfileProps {
-  profile: Profile
+interface ProfileProps extends statusIconProps {
+  profile: Profile;
 }
-const ProfileCard = ({profile}: ProfileProps) => {
+const ProfileCard = ({profile, isLoading, isComplete}: ProfileProps) => {
   return (
-    <div className="flex flex-row gap-x-[10px]">
+    <div className="relative flex flex-row gap-x-[10px]">
       <div className="bg-lightGray rounded-[4px] min-w-[60px] w-[60px] aspect-square flex justify-center items-center">
         <span className="opacity-60">
           <ProfileIcon />
@@ -112,6 +127,10 @@ const ProfileCard = ({profile}: ProfileProps) => {
           <span className="block mt-[4px] opacity-40 w-[80%] truncate-lines">{profile.title}</span>
         </div>
         <span>{profile.company}</span>
+      </div>
+
+      <div className="absolute w-[24px] aspect-square right-0 top-[50%] translate-y-[-50%]">
+        <StatusIcon isLoading={isLoading} isComplete={isComplete} />
       </div>
     </div>
   )

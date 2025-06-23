@@ -53,3 +53,34 @@ span.truncate-lines {
 .added-profile-card:last-child {
   margin-bottom: 20px;
 }
+
+/* status icon styles */
+.custom-spinner {
+  border: 2.6px solid var(--color-borderGray);
+  border-top: 2.6px solid #000;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.checkmark-con {
+  animation: scaleUp 0.25s ease-out forwards;
+  animation-delay: 0s;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(.7);
+  } to {
+    transform: scale(1);
+  }
+}
+
+
+/* status icon end */
