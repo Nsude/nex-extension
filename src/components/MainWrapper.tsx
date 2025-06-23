@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { tabs, type Profile } from "../App";
-import ProfileIcon from "../assets/icons/ProfileIcon";
 import CustomButton from "./CustomButton";
 import StatusIcon, { type statusIconProps } from "../assets/icons/StatusIcon";
+import LinkedInIcon from "../assets/icons/LinkedInIcon";
 
 interface Props {
   selectedTab: string;
@@ -138,11 +138,23 @@ interface ProfileProps extends statusIconProps {
   profile: Profile;
 }
 const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
+  const [url, setUrl] = useState('');
+
+  useEffect(() => {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      const currentUrl = tabs[0].url;
+      setUrl(currentUrl || '');
+    })
+  }, [])
+
   return (
     <div className="relative flex flex-row gap-x-[10px]">
-      <div className="bg-lightGray rounded-[4px] min-w-[60px] w-[60px] aspect-square flex justify-center items-center">
-        <span className="opacity-60">
-          <ProfileIcon />
+      <div className="bg-linkedinBlue rounded-[4px] min-w-[60px] w-[60px] aspect-square flex justify-center items-center">
+        <span>
+          {
+            url.includes('linkedin.com/in/') ? 
+            <LinkedInIcon /> : null
+          }
         </span>
       </div>
 
