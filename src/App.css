@@ -44,3 +44,12 @@ span.truncate-lines {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* added profile card */
+.added-profile-card:last-child span.profile-border {
+  display: none;
+}
+
+.added-profile-card:last-child {
+  margin-bottom: 20px;
+}
