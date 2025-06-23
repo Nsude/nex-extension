@@ -16,15 +16,8 @@ function App() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [selectedTab, setSelectedTab] = useState("Current Profile");
 
-  // update profile when a user goes from feed to their a profile without reloading the page
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((msg) => {
-      if (msg.type !== "PROFILE_UPDATED") return;
-      setProfile({...msg.data});
-    })
-  }, [])
-
-  useEffect(() => {
+    chrome.storage.local.clear()
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       if (!tabs[0].id) return;
 

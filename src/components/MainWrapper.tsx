@@ -152,7 +152,7 @@ const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
       <div className="bg-linkedinBlue rounded-[4px] min-w-[60px] w-[60px] aspect-square flex justify-center items-center">
         <span>
           {
-            url.includes('linkedin.com/in/') ? 
+            url.includes('linkedin.com') ? 
             <LinkedInIcon /> : null
           }
         </span>

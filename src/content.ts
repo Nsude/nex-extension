@@ -43,25 +43,6 @@ function cleanRawName(text: string): string {
     .trim();
 }
 
-let lastUrl = location.href;
-
-new MutationObserver(() => {
-  const currentUrl = location.href;
-  if (currentUrl !== lastUrl) {
-    lastUrl = currentUrl;
-
-    if (currentUrl.includes("linkedin.com/in/")) {
-      
-      setTimeout(() => {
-        const profileData = extractProfileInfo();
-        chrome.runtime.sendMessage({ type: "PROFILE_UPDATED", data: profileData });
-      }, 3000) // delay for linkedin load time
-    } else {
-      chrome.runtime.sendMessage({ type: "PROFILE_UPDATED", data: null });
-    }
-  }
-}).observe(document, { subtree: true, childList: true });
-
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (msg.action === 'getProfileInfo') {
       const isProfilePage = window.location.href.includes('linkedin.com/in/');
