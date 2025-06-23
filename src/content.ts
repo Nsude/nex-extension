@@ -11,17 +11,27 @@ function extractProfileInfo() {
 }
 
 function getCurrentCompany(): string | null {
-  // Find all spans that match the class used in the experience item
   const experienceSpans = Array.from(
     document.querySelectorAll('a[data-field="experience_company_logo"] span.t-14.t-normal')
   );
 
-  for (const span of experienceSpans) {
-    const text = span.textContent?.trim();
-    if (text && text.includes('·')) {
-      // Return only the part before the dot
-      return text.split('·')[0].trim();
+  const flagWords = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+  for (const wrapperSpan of experienceSpans) {
+    const ariaSpan = wrapperSpan.querySelector('span[aria-hidden="true"]');
+    const text = ariaSpan?.textContent?.trim();
+    if (!text) continue;
+
+    const lowerText = text.toLowerCase();
+
+    const isDate = flagWords.some((month) => lowerText.includes(month));
+    if (isDate) continue;
+
+    if (text.includes("·")) {
+      return text.split("·")[0].trim();
     }
+
+    return text;
   }
 
   return null;
