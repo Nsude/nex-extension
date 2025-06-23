@@ -51,11 +51,11 @@ new MutationObserver(() => {
     lastUrl = currentUrl;
 
     if (currentUrl.includes("linkedin.com/in/")) {
-      const profileData = extractProfileInfo();
       
       setTimeout(() => {
+        const profileData = extractProfileInfo();
         chrome.runtime.sendMessage({ type: "PROFILE_UPDATED", data: profileData });
-      }, 250)
+      }, 3000) // delay for linkedin load time
     } else {
       chrome.runtime.sendMessage({ type: "PROFILE_UPDATED", data: null });
     }

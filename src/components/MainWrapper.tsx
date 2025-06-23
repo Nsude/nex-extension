@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { tabs, type Profile } from "../App";
 import ProfileIcon from "../assets/icons/ProfileIcon";
 import CustomButton from "./CustomButton";
@@ -5,11 +6,33 @@ import CustomButton from "./CustomButton";
 interface Props {
   selectedTab: string;
   profile: Profile | null;
-  added?: Profile[];
 }
 
-const MainWrapper = ({selectedTab, profile, added}: Props) => {
-  // const testProfile: Profile = {name: "John Doe", title: "Chief Executive Officer AFter the first named priest of Antarctica", company: "Google"}
+
+const MainWrapper = ({selectedTab, profile}: Props) => {
+  const [addedProfiles, setAddedProfiles] = useState<Profile[]>([]);
+
+  const handleAddProfile = () => {
+    if (!profile) return;
+    
+    const isAdded = addedProfiles.find(item => item.name === profile?.name);
+    if (isAdded) return;
+    
+    
+    chrome.storage.local.get(['addedProfiles'], (response) => {
+      let updatedProfileList;
+      if (response.addedProfiles) {
+        updatedProfileList = [...response.addedProfiles, profile];
+      } else {
+        updatedProfileList = [profile];
+      };
+      
+      setAddedProfiles(updatedProfileList);
+      chrome.storage.local.set({addedProfiles: updatedProfileList});
+    })
+
+  }
+  
   return (
     <div className="w-full pt-[25px]">
       {/* Tab 1 (Current Profile) */}
@@ -18,9 +41,10 @@ const MainWrapper = ({selectedTab, profile, added}: Props) => {
           <div>
             <ProfileCard profile={profile} />
             <span className="absolute bottom-[20px] left-[20px]">
-              <CustomButton label="Add Profile" profile={profile} handleClick={() => {}} />
+              <CustomButton label="Add Profile" profile={profile} handleClick={handleAddProfile} />
             </span>
           </div>
+
         ) : selectedTab === tabs[0].label && !profile ? (
           <div className="flex w-full flex-col gap-y-[10px] opacity-40 mt-15px] items-center text-center">
             <span className="w-[65%]">
@@ -35,11 +59,11 @@ const MainWrapper = ({selectedTab, profile, added}: Props) => {
 
       {/* Tab 2 (Added) */}
       {
-        selectedTab === tabs[1].label && added ? (
+        selectedTab === tabs[1].label && addedProfiles ? (
           <div>
 
           </div>
-        ) : selectedTab === tabs[1].label && !added ? (
+        ) : selectedTab === tabs[1].label && !addedProfiles ? (
           <div className="flex mt-[50px] justify-center items-center">
             <span className="w-[65%] opacity-40 text-center">
               Seems like you haven’t added anyone yet :)

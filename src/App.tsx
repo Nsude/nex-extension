@@ -20,8 +20,7 @@ function App() {
   useEffect(() => {
     chrome.runtime.onMessage.addListener((msg) => {
       if (msg.type !== "PROFILE_UPDATED") return;
-      console.log("message data: ", msg.data)
-      setProfile(msg.data);
+      setProfile({...msg.data});
     })
   }, [])
 
@@ -31,14 +30,13 @@ function App() {
 
       chrome.tabs.sendMessage(tabs[0].id, {action: "getProfileInfo"}, (response) => {
         if (!response) return;
-        console.log(response)
         setProfile({...response});
       })
     })
   }, []);
 
   return (
-    <div className="w-[410px] h-[442px] p-[20px] border-1 border-borderGray rounded-[10px] main-shadow relative">
+    <div className="w-[410px] h-[442px] p-[20px] border-1 border-borderGray main-shadow relative">
       {/* header */}
       <div className="flex flex-row justify-between items-center">
         <div className="h-full w-full relative">
