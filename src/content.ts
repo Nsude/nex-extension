@@ -97,10 +97,11 @@
     if (!anchors) return null;
 
     for (const anchor of anchors) {
+      const childrenCount = anchor.children.length;
       const nextElem = anchor.parentElement?.nextElementSibling;
 
-      if (!nextElem) return 1;
-      if (nextElem) return 2;
+      if (childrenCount >= 4 || (childrenCount <= 3 && !nextElem)) return 1;
+      if (childrenCount <= 3) return 2;
     }
 
     return null;
