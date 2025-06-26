@@ -54,6 +54,39 @@ span.truncate-lines {
   margin-bottom: 20px;
 }
 
+.added-profile-card .profile-delete-button {
+  transform: translateX(200%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.added-profile-card:hover .profile-delete-button {
+  transform: translateX(0);
+}
+
+.profile-delete-button span {
+  transition: opacity 0.25s linear, transform 0.25s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.profile-delete-button:hover span {
+  opacity: 1;
+  transform: scale(1.07);
+}
+
+.added-profile-card .profile-delete-button:active {
+  transform: scale(0.5);
+}
+
+.profile-container {
+  transition: opacity 0.25s linear;
+  opacity: 1;
+}
+
+.profile-container.fade {
+  opacity: .3;
+}
+
+/* added profile card end */
+
 /* status icon styles */
 .custom-spinner {
   border: 2.6px solid var(--color-borderGray);

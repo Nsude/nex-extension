@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { tabs, type Profile } from "../App";
 import CustomButton from "./CustomButton";
-import StatusIcon, { type statusIconProps } from "../assets/icons/StatusIcon";
-import LinkedInIcon from "../assets/icons/LinkedInIcon";
+import CloseIcon from "../assets/icons/CloseIcon";
+import ProfileCard from "./ProfileCard";
 
 interface Props {
   selectedTab: string;
   profile: Profile | null;
 }
-
 
 const MainWrapper = ({ selectedTab, profile }: Props) => {
   const [addedProfiles, setAddedProfiles] = useState<Profile[]>([]);
@@ -70,6 +69,30 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
     }, 2000)
   }
 
+  // delete profile 
+  const deleteProfile = (id: number) => {
+    const toDelete = addedProfiles.find(profile => profile.id === id);
+    if (!toDelete) return;
+
+    const updatedList = [...addedProfiles];
+    updatedList.splice(updatedList.indexOf(toDelete), 1);
+    setAddedProfiles(updatedList);
+
+    chrome.storage.local.set({addedProfiles: updatedList});
+  }
+
+  // fade hovered profile 
+  const fadeProfile = (index: number) => {
+    disableFade();
+    const hoveredProfile = document.querySelector(`.profile-container[data-index="${index}"]`);
+    
+    hoveredProfile?.classList.add("fade");
+  }
+
+  const disableFade = () => {
+    document.querySelector(".fade")?.classList.remove("fade");
+  }
+
   return (
     <div className="w-full pt-[25px]">
       {/* current profile */}
@@ -82,9 +105,9 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
               isComplete={status.isComplete} />
 
             <span className="absolute bottom-[20px] left-[20px]">
-              <CustomButton 
-                label="Add Profile" 
-                profile={profile} 
+              <CustomButton
+                label="Add Profile"
+                profile={profile}
                 isAlreadyAdded={status.isComplete}
                 handleClick={handleAddProfile} />
             </span>
@@ -107,14 +130,27 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
         addedProfiles.length > 0 ? (
           <div className="flex flex-col gap-y-[20px] w-full h-[258px] overflow-y-scroll">
             {addedProfiles.slice().reverse().map((item, i) => (
-              <div className="relative mt-[20px] added-profile-card"
+              <div className="relative mt-[20px] cursor-pointer added-profile-card min-h-fit overflow-x-clip"
                 key={'profile_' + (i + 1)}>
-                <ProfileCard
-                  profile={item}
-                  isLoading={status.isLoading}
-                  isComplete={status.isComplete} />
+                <div data-index={i} className="profile-container">
+                  <ProfileCard
+                    profile={item}
+                    isLoading={status.isLoading}
+                    isComplete={status.isComplete} />
+                </div>
 
-                <span className="h-[1px] w-[95%] absolute bottom-[-20px] left-0 bg-borderGray/50 profile-border" />
+                {/* delete button */}
+                <button 
+                  onClick={() => deleteProfile(item.id)}
+                  onMouseEnter={() => fadeProfile(i)} 
+                  onMouseLeave={disableFade}
+                  className="absolute right-[20px] top-[50%] translate-y-[-50%] bg-lightGray h-[40px] aspect-square rounded-[30px] flex justify-center items-center profile-delete-button">
+                  <span className="opacity-40">
+                    <CloseIcon />
+                  </span>
+                </button>
+
+                <span className="h-[1px] right-[20px] absolute bottom-[-20px] left-0 bg-borderGray/50 profile-border" />
               </div>
             ))}
           </div>
@@ -133,42 +169,3 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 }
 
 export default MainWrapper;
-
-interface ProfileProps extends statusIconProps {
-  profile: Profile;
-}
-const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
-  const [url, setUrl] = useState('');
-
-  useEffect(() => {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      const currentUrl = tabs[0].url;
-      setUrl(currentUrl || '');
-    })
-  }, [])
-
-  return (
-    <div className="relative flex flex-row gap-x-[10px]">
-      <div className="bg-linkedinBlue rounded-[4px] min-w-[60px] w-[60px] aspect-square flex justify-center items-center">
-        <span>
-          {
-            url.includes('linkedin.com') ? 
-            <LinkedInIcon /> : null
-          }
-        </span>
-      </div>
-
-      <div className="flex flex-col leading-[1] w-full">
-        <div className="mb-[8px]">
-          <span className="w-full">{profile.name}</span>
-          <span className="block mt-[4px] opacity-40 w-[80%] truncate-lines">{profile.title}</span>
-        </div>
-        <span>{profile.company}</span>
-      </div>
-
-      <div className="absolute w-[24px] aspect-square right-0 top-[50%] translate-y-[-50%]">
-        <StatusIcon isLoading={isLoading} isComplete={isComplete} />
-      </div>
-    </div>
-  )
-}

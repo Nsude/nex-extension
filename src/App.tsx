@@ -8,6 +8,7 @@ export interface Profile {
   name: string;
   title: string;
   company: string;
+  id: number;
 }
 
 export const tabs = [{label: "Current Profile", id: "0"}, {label: "Added", id: "1"}];
@@ -22,7 +23,7 @@ function App() {
 
       chrome.tabs.sendMessage(tabs[0].id, {action: "getProfileInfo"}, (response) => {
         if (!response) return;
-        setProfile({...response});
+        setProfile({...response, id: Date.now()});
       })
     })
   }, []);
