@@ -13,6 +13,7 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
   const [addedProfiles, setAddedProfiles] = useState<Profile[]>([]);
   const [status, setStatus] = useState({ isLoading: false, isComplete: false });
 
+  // display checkmark for already added profiles
   useEffect(() => {
     if (!profile || selectedTab !== tabs[0].label) return;
 
@@ -36,7 +37,7 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
   }, [selectedTab]);
 
 
-  // load added profiles
+  // load added profiles from storage
   useEffect(() => {
     chrome.storage.local.get(['addedProfiles'], (response) => {
       if (!response.addedProfiles) return;
@@ -60,13 +61,12 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
         updatedProfileList = [profile];
       };
 
-      setAddedProfiles(updatedProfileList);
-      chrome.storage.local.set({ addedProfiles: updatedProfileList });
+      setTimeout(() => {
+        setAddedProfiles(updatedProfileList);
+        chrome.storage.local.set({ addedProfiles: updatedProfileList });
+        setStatus({ isComplete: true, isLoading: false });
+      }, 2000)
     })
-
-    setTimeout(() => {
-      setStatus({ isComplete: true, isLoading: false });
-    }, 2000)
   }
 
   // delete profile 
