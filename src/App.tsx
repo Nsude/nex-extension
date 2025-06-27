@@ -3,6 +3,7 @@ import SettingsIcon from "./assets/icons/SettingsIcon";
 import './App.css';
 import Tab from "./components/Tab";
 import MainWrapper from "./components/MainWrapper";
+import LinkIcon from "./assets/icons/LinkIcon";
 
 export interface Profile {
   name: string;
@@ -22,6 +23,8 @@ function App() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [selectedTab, setSelectedTab] = useState("Current Profile");
   const [displaySettingsMenu, setDisplaySettingsMenu] = useState(false);
+  const [autosave, setAutosave] = useState(false);
+
   let hideTimeout: any;
 
   // init current profile
@@ -38,6 +41,7 @@ function App() {
     })
   }, []);
 
+  // toggle settings menu
   const toggleSettingsModal = (mouseLeave: boolean = false) => {
     if (mouseLeave) {
       hideTimeout = setTimeout(() => {
@@ -48,6 +52,11 @@ function App() {
       clearTimeout(hideTimeout);
       setDisplaySettingsMenu((prev) => !prev);
     }
+  }
+
+  // toggle autosave
+  const toggleAutosave = () => {
+    setAutosave(prev => !prev);
   }
 
   return (
@@ -72,11 +81,31 @@ function App() {
         </button>
 
         {/* settings modal */}
-        <div 
-          onMouseEnter={() => { clearTimeout(hideTimeout); setDisplaySettingsMenu(true)}}
+        <div
+          onMouseEnter={() => { clearTimeout(hideTimeout); setDisplaySettingsMenu(true) }}
           onMouseLeave={() => setDisplaySettingsMenu(false)}
-          className={`absolute w-[202px] h-[86px] border border-borderGray rounded-[6px] right-0 top-[43px] bg-white z-[5] cursor-pointer settings-modal ${displaySettingsMenu ? 'settings-modal-active' : ''}`}>
+          className={`absolute p-[15px] w-[202px] h-[86px] border border-borderGray rounded-[6px] right-0 top-[43px] bg-white z-[5] cursor-pointer settings-modal ${displaySettingsMenu ? 'settings-modal-active' : ''}`}>
+          <span className={`flex flex-col justify-between h-full menu-container`}>
+            {/* auto-save */}
+            <button
+              onClick={toggleAutosave}
+              className={`flex justify-between items-center autosave-button
+                ${autosave ? 'autosave-active' : ''}
+                `}>
+              <span className="opacity-40 transition-all duration-[0.4s]">Auto-save</span>
+              <div className={`relative w-[28px] h-[17px] bg-lightGray border border-borderGray rounded-4xl autosave-toggle-con`}>
+                <span className="absolute left-[2px] top-[2px] bg-borderGray w-[11px] aspect-square rounded-4xl" />
+              </div>
+            </button>
 
+            <button className="group opacity-60 hover:opacity-100 transition-opacity duration-[0.2s] flex flex-row gap-x-[6px] items-center dashboard-link w-fit">
+              <div className="relative overflow-hidden flex items-center gap-x-[6px]">
+                <span className="absolute top-[50%] translate-y-[-50%] translate-x-[-16px] group-hover:translate-x-[0] scale-50 group-hover:scale-100"><LinkIcon /></span>
+                <span className="group-hover:translate-x-[16px]">Dashboard</span>
+                <span className="group-hover:translate-x-[16px] scale-100 group-hover:scale-50"><LinkIcon /></span>
+              </div>
+            </button>
+          </span>
         </div>
       </div>
 
