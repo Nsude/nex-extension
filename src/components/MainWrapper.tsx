@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { tabs, type Profile } from "../App";
+import { isExtensionEnv, tabs, type Profile } from "../App";
 import CustomButton from "./CustomButton";
 import CloseIcon from "../assets/icons/CloseIcon";
 import ProfileCard from "./ProfileCard";
@@ -15,7 +15,7 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // display checkmark for already added profiles
   useEffect(() => {
-    if (!profile || selectedTab !== tabs[0].label) return;
+    if (!profile || selectedTab !== tabs[0].label || !isExtensionEnv()) return;
 
     chrome.storage.local.get(['addedProfiles'], (response) => {
       const added = response.addedProfiles || [];
@@ -31,6 +31,8 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // Hide checkmarks when on the "added" tab
   useEffect(() => {
+    if (!isExtensionEnv()) return; 
+    
     if (selectedTab === tabs[1].label) {
       setStatus({ isComplete: false, isLoading: false });
     }
@@ -39,6 +41,8 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // load added profiles from storage
   useEffect(() => {
+    if (!isExtensionEnv()) return; 
+    
     chrome.storage.local.get(['addedProfiles'], (response) => {
       if (!response.addedProfiles) return;
 
@@ -47,7 +51,7 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
   }, [])
 
   const handleAddProfile = () => {
-    if (!profile) return;
+    if (!profile || !isExtensionEnv()) return;
 
     const isAdded = addedProfiles.find(item => item.name === profile?.name);
     if (isAdded) return;
@@ -71,6 +75,8 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // delete profile 
   const deleteProfile = (id: number) => {
+    if (!isExtensionEnv()) return; 
+
     const toDelete = addedProfiles.find(profile => profile.id === id);
     if (!toDelete) return;
 

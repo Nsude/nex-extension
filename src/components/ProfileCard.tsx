@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import LinkedInIcon from "../assets/icons/LinkedInIcon";
 import StatusIcon, { type statusIconProps } from "../assets/icons/StatusIcon";
-import type { Profile } from "../App";
+import { isExtensionEnv, type Profile } from "../App";
 
 interface ProfileProps extends statusIconProps {
   profile: Profile;
@@ -10,6 +10,8 @@ const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
+    if (!isExtensionEnv()) return; 
+
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       const currentUrl = tabs[0].url;
       setUrl(currentUrl || '');

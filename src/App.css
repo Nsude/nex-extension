@@ -114,6 +114,46 @@ span.truncate-lines {
     transform: scale(1);
   }
 }
-
-
 /* status icon end */
+
+/* settings modal */
+.settings-modal {
+  transform: scaleY(0);
+  transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.settings-modal-active {
+  transform: scaleY(1);
+}
+
+button.settings-icon-open {
+  background-color: #fff;
+  border-radius: 30px;
+}
+
+button.settings-button {
+  transition: transform 0.25s cubic-bezier(0.65, 0, 0.35, 1), background-color 0.25s linear, border-radius .25s linear;
+}
+
+button.settings-button:hover {
+  border-radius: 30px;
+}
+
+.settings-button:active {
+  transform: scale(0.8);
+}
+
+button.settings-icon-open span {
+  opacity: 1;
+}
+
+.blur-overlay {
+  transition: opacity .4s linear 0.1s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.blur-overlay-active {
+  opacity: 1;
+  pointer-events: all;
+}
