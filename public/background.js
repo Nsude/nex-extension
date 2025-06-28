@@ -33,7 +33,12 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (onUpdatedCheck(changeInfo, tab) && autosaveEnabled) {
     chrome.scripting.executeScript({
       target: {tabId},
-      files: ['autosave.js']
+      files: ['content.js']
+    }, () => {
+      chrome.scripting.executeScript({
+        target: {tabId},
+        files: ['autosave.js']
+      })
     })
   }
 })

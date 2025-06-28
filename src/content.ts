@@ -4,6 +4,7 @@
 
   function extractProfileInfo() {
     const type = detectProfileType();
+    console.log('profile type: ', type)
     const rawName = document.querySelector('h1')?.textContent?.trim();
     if (!rawName) return;
 
@@ -101,6 +102,7 @@
       const nextElem = anchor.parentElement?.nextElementSibling || null;
 
       const isSpan = isElemFirstChildTypeSpan(nextElem);
+      console.log(isSpan, 'nextElem: ', nextElem)
 
       // type 1
       if (
@@ -119,13 +121,27 @@
     if (!elem) return;
 
     // <ul> <li> <span>
-    const ulLiSpan = elem.querySelector('ul li span');
+    const ulLiSpan = elem.querySelector('ul li:first-child')?.firstElementChild?.tagName.toLowerCase();
 
-    return !!ulLiSpan;
+    let isSpan;
+
+    if (ulLiSpan === 'span') {
+      isSpan = true;
+    } else {
+      isSpan = false;
+    }
+
+    return isSpan;
   }
 
 
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+    // verify ping from autosave script
+    if (msg.action === 'ping') {
+      console.log('content script ready')
+      sendResponse('ready');
+    }
+
     if (msg.action === 'getProfileInfo') {
       const isProfilePage = window.location.href.includes('linkedin.com/in/');
       if (!isProfilePage) return sendResponse(null);
