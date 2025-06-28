@@ -98,13 +98,30 @@
 
     for (const anchor of anchors) {
       const childrenCount = anchor.children.length;
-      const nextElem = anchor.parentElement?.nextElementSibling;
+      const nextElem = anchor.parentElement?.nextElementSibling || null;
 
-      if (childrenCount >= 4 || (childrenCount <= 3 && !nextElem)) return 1;
-      if (childrenCount <= 3) return 2;
+      const isSpan = isElemFirstChildTypeSpan(nextElem);
+
+      // type 1
+      if (
+        childrenCount >= 4 || 
+        (childrenCount <= 3 && !nextElem) || 
+        (nextElem && !isSpan)
+      ) return 1;
+      // type 2
+      if (childrenCount <= 3 && nextElem) return 2;
     }
 
     return null;
+  }
+
+  const isElemFirstChildTypeSpan = (elem: Element | null) => {
+    if (!elem) return;
+
+    // <ul> <li> <span>
+    const ulLiSpan = elem.querySelector('ul li span');
+
+    return !!ulLiSpan;
   }
 
 
