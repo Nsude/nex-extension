@@ -4,7 +4,6 @@
 
   function extractProfileInfo() {
     const type = detectProfileType();
-    console.log('profile type: ', type)
     const rawName = document.querySelector('h1')?.textContent?.trim();
     if (!rawName) return;
 
@@ -100,9 +99,7 @@
     for (const anchor of anchors) {
       const childrenCount = anchor.children.length;
       const nextElem = anchor.parentElement?.nextElementSibling || null;
-
       const isSpan = isElemFirstChildTypeSpan(nextElem);
-      console.log(isSpan, 'nextElem: ', nextElem)
 
       // type 1
       if (
@@ -123,13 +120,7 @@
     // <ul> <li> <span>
     const ulLiSpan = elem.querySelector('ul li:first-child')?.firstElementChild?.tagName.toLowerCase();
 
-    let isSpan;
-
-    if (ulLiSpan === 'span') {
-      isSpan = true;
-    } else {
-      isSpan = false;
-    }
+    let isSpan = ulLiSpan === 'span' ? true : false;
 
     return isSpan;
   }
