@@ -31,6 +31,12 @@ function App() {
   useEffect(() => {
     if (!isExtensionEnv()) return;
 
+    // init auto save state
+    chrome.storage.local.get(['autosave'], (response) => {
+      if (!response.autosave) return;
+      setAutosave(response.autosave);
+    })
+
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (!tabs[0].id) return;
 
@@ -56,7 +62,9 @@ function App() {
 
   // toggle autosave
   const toggleAutosave = () => {
-    setAutosave(prev => !prev);
+    let newState = !autosave;
+    setAutosave(newState);
+    chrome.storage.local.set({autosave: newState});
   }
 
   return (
