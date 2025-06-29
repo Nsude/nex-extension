@@ -6,10 +6,23 @@ const onUpdatedCheck = (changeInfo, tab) => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (onUpdatedCheck(changeInfo, tab)) {
-    chrome.scripting.executeScript({
-      target: {tabId},
-      files: ['linkedin-scrapper.js', 'content.js']
-    })
+    if (autosaveEnabled) {
+      // Inject all scripts for autosave
+      chrome.scripting.executeScript({
+        target: {tabId},
+        files: ['linkedin-scrapper.js', 'content.js']
+      }, () => {
+        chrome.scripting.executeScript({
+          target: {tabId},
+          files: ['autosave.js']
+        })
+      })
+    } else {
+      chrome.scripting.executeScript({
+        target: {tabId},
+        files: ['linkedin-scrapper.js', 'content.js']
+      })
+    }
   }
 })
 
@@ -26,19 +39,4 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 // load the current autosave state on statup
 chrome.storage.local.get(['autosave'], (response) => {
   autosaveEnabled = response.autosave === true;
-})
-
-// add listener to execute auto save script if the conditions are met
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (onUpdatedCheck(changeInfo, tab) && autosaveEnabled) {
-    chrome.scripting.executeScript({
-      target: {tabId},
-      files: ['linkedin-scrapper.js', 'content.js']
-    }, () => {
-      chrome.scripting.executeScript({
-        target: {tabId},
-        files: ['linkedin-scrapper.js', 'autosave.js']
-      })
-    })
-  }
 })

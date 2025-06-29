@@ -1,5 +1,3 @@
-import type { Profile } from "./App";
-
 (() => {
   const linkedInExperinceParentClass =
     'a[data-field="experience_company_logo"]:not(.pvs-entity__image-container--outline-offset)';
@@ -40,7 +38,7 @@ import type { Profile } from "./App";
       let updatedProfileList;
       let currentProfiles = response.addedProfiles;
       if (currentProfiles) {
-        const alreadyAdded = currentProfiles.find((item: Profile) => {
+        const alreadyAdded = currentProfiles.find((item: {name: string, title: string, company: string, id: number}) => {
           return (
             item.name === profileData.name 
             && item.title === profileData.title
