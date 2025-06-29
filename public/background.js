@@ -8,7 +8,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (onUpdatedCheck(changeInfo, tab)) {
     chrome.scripting.executeScript({
       target: {tabId},
-      files: ['content.js']
+      files: ['linkedin-scrapper.js', 'content.js']
     })
   }
 })
@@ -33,11 +33,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (onUpdatedCheck(changeInfo, tab) && autosaveEnabled) {
     chrome.scripting.executeScript({
       target: {tabId},
-      files: ['content.js']
+      files: ['linkedin-scrapper.js', 'content.js']
     }, () => {
       chrome.scripting.executeScript({
         target: {tabId},
-        files: ['autosave.js']
+        files: ['linkedin-scrapper.js', 'autosave.js']
       })
     })
   }

@@ -1,3 +1,5 @@
+import type { Profile } from "./App";
+
 (() => {
   const linkedInExperinceParentClass =
     'a[data-field="experience_company_logo"]:not(.pvs-entity__image-container--outline-offset)';
@@ -25,35 +27,36 @@
     }, 200)
   }
 
-  // const awaitContentScript = (callback: () => void) => {
-  //   const loadStart = Date.now();
-
-  //   const readyInterval = setInterval(() => {
-  //     chrome.runtime.sendMessage({action: 'ping'}, (response) => {
-  //       if (response === 'ready') {
-  //         clearInterval(readyInterval);
-  //         callback();
-  //       } else {
-  //         console.warn("content script not ready")
-  //       }
-  //     })
-
-  //     // terminate after 10s
-  //     if (Date.now() - loadStart > 10000) {
-  //       clearInterval(readyInterval);
-  //       console.error("Unable to make connection with content script");
-  //     }
-  //   }, 200)
-  // }
-
   runAfterLoad(() => {
-    // awaitContentScript(() => {
-    //   chrome.runtime.sendMessage({action: "getProfileInfo"}, (response) => {
-    //     console.log('runtime things')
-    //     if (!response) return;
-    //     console.log(response);
-    //   })
-    // })
+    const data = extractProfileInfo();
+    if (!data) {
+      console.error("Error extracting profile info: ", chrome.runtime.lastError);
+      return;
+    }
+
+    const profileData = {...data, id: Date.now()};
+
+    chrome.storage.local.get(['addedProfiles'], (response) => {
+      let updatedProfileList;
+      let currentProfiles = response.addedProfiles;
+      if (currentProfiles) {
+        const alreadyAdded = currentProfiles.find((item: Profile) => {
+          return (
+            item.name === profileData.name 
+            && item.title === profileData.title
+            && item.company === profileData.company
+          )
+        })
+
+        if (alreadyAdded) return;
+
+        updatedProfileList = [...response.addedProfiles, profileData];
+      } else {
+        updatedProfileList = [profileData];
+      }
+
+      chrome.storage.local.set({addedProfiles: updatedProfileList});
+    })
   })
 
 })();

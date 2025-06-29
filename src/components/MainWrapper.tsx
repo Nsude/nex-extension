@@ -31,8 +31,8 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // Hide checkmarks when on the "added" tab
   useEffect(() => {
-    if (!isExtensionEnv()) return; 
-    
+    if (!isExtensionEnv()) return;
+
     if (selectedTab === tabs[1].label) {
       setStatus({ isComplete: false, isLoading: false });
     }
@@ -41,8 +41,8 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // load added profiles from storage
   useEffect(() => {
-    if (!isExtensionEnv()) return; 
-    
+    if (!isExtensionEnv()) return;
+
     chrome.storage.local.get(['addedProfiles'], (response) => {
       if (!response.addedProfiles) return;
 
@@ -53,7 +53,13 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
   const handleAddProfile = () => {
     if (!profile || !isExtensionEnv()) return;
 
-    const isAdded = addedProfiles.find(item => item.name === profile?.name);
+    const isAdded = addedProfiles.find((item: Profile) => {
+      return (
+        item.name === profile.name
+        && item.title === profile.title
+        && item.company === profile.company
+      )
+    })
     if (isAdded) return;
     setStatus({ isComplete: false, isLoading: true });
 
@@ -75,7 +81,7 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
 
   // delete profile 
   const deleteProfile = (id: number) => {
-    if (!isExtensionEnv()) return; 
+    if (!isExtensionEnv()) return;
 
     const toDelete = addedProfiles.find(profile => profile.id === id);
     if (!toDelete) return;
@@ -84,14 +90,14 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
     updatedList.splice(updatedList.indexOf(toDelete), 1);
     setAddedProfiles(updatedList);
 
-    chrome.storage.local.set({addedProfiles: updatedList});
+    chrome.storage.local.set({ addedProfiles: updatedList });
   }
 
   // fade hovered profile 
   const fadeProfile = (index: number) => {
     disableFade();
     const hoveredProfile = document.querySelector(`.profile-container[data-index="${index}"]`);
-    
+
     hoveredProfile?.classList.add("fade");
   }
 
@@ -146,9 +152,9 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
                 </div>
 
                 {/* delete button */}
-                <button 
+                <button
                   onClick={() => deleteProfile(item.id)}
-                  onMouseEnter={() => fadeProfile(i)} 
+                  onMouseEnter={() => fadeProfile(i)}
                   onMouseLeave={disableFade}
                   className="absolute right-[20px] top-[50%] translate-y-[-50%] bg-lightGray h-[40px] aspect-square rounded-[30px] flex justify-center items-center profile-delete-button">
                   <span className="opacity-40">
