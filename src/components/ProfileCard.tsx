@@ -31,10 +31,10 @@ const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
 
       <div className="flex flex-col leading-[1] w-full">
         <div className="mb-[8px]">
-          <span className="w-full">{profile.name}</span>
+          <span className="w-[80%] truncate-lines">{profile.name}</span>
           <span className="block mt-[4px] opacity-40 w-[80%] truncate-lines">{profile.title}</span>
         </div>
-        <span>{profile.company}</span>
+        <span className="w-[80%] truncate-lines">{profile.company}</span>
       </div>
 
       <div className="absolute w-[24px] aspect-square right-0 top-[50%] translate-y-[-50%]">
