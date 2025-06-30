@@ -7,6 +7,8 @@ declare global {
   function cleanRawName(text: string): string;
   function detectProfileType(): 1 | 2 | null;
   function isElemFirstChildTypeSpan(elem: Element | null): boolean | undefined;
+  function checkElem():boolean;
+  function runAfterLoad(callback: () => void):any;
   const linkedInExperinceParentClass: string;
 }
 
@@ -107,6 +109,7 @@ declare global {
       .trim();
   };
   
+  // detects the profile type 1 | 2
   (globalThis as any).detectProfileType = function(): 1 | 2 | null {
     const anchors = document.querySelectorAll(linkedInExperinceParentClass);
   
@@ -140,4 +143,28 @@ declare global {
   
     return isSpan;
   };
+
+  (globalThis as any).checkElem = function () {
+    return !!document.querySelector(`${linkedInExperinceParentClass} span`);
+  };
+
+  // run check every 200ms
+  // if it exist clearinterval and run function
+  // also set a timeout timer to terminate the operation 
+  (globalThis as any).runAfterLoad = function (callback: () => void) {
+    const loadStart = Date.now();
+
+    const checkInterval = setInterval(() => {
+      if (checkElem()) {
+        clearInterval(checkInterval);
+        callback();
+      }
+
+      if (Date.now() - loadStart > 10000) {
+        clearInterval(checkInterval);
+        console.warn("Error loading profile for autosave");
+      }
+    }, 200)
+  };
+
 })();

@@ -126,12 +126,12 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
           </div>
         ) : (
           // empty state
-          <div className="flex w-full flex-col gap-y-[10px] opacity-40 mt-[15px] items-center text-center">
+          <div className="flex w-full flex-col gap-y-[10px] opacity-40 mt-[25px] items-center text-center">
             <span className="w-[65%]">
               To get started, go to a profile then click “Add Profile”
             </span>
             <span className="w-[65%]">
-              or enable auto-save in “Settings” to add every profile you visit while Nex is running.
+              or enable auto-save in “Settings” to add every profile you visit.
             </span>
           </div>
         )
