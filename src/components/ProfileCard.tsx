@@ -5,14 +5,15 @@ import { isExtensionEnv, type Profile } from "../App";
 
 interface ProfileProps extends statusIconProps {
   profile: Profile;
+  selectedTab: string
 }
-const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
+const ProfileCard = ({ profile, isLoading, isComplete, selectedTab }: ProfileProps) => {
   const [url, setUrl] = useState('');
 
   useEffect(() => {
-    if (!isExtensionEnv()) return; 
+    if (!isExtensionEnv()) return;
 
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const currentUrl = tabs[0].url;
       setUrl(currentUrl || '');
     })
@@ -31,8 +32,12 @@ const ProfileCard = ({ profile, isLoading, isComplete }: ProfileProps) => {
 
       <div className="flex flex-col leading-[1] w-full">
         <div className="mb-[8px]">
-          <span className="w-[80%] truncate-lines">{profile.name}</span>
-          <span className="block mt-[4px] opacity-40 w-[80%] truncate-lines">{profile.title}</span>
+          <a href={profile.link} target="_blank"
+            className={`w-[80%] relative truncate-lines ${selectedTab.toLowerCase() === "added" ? "profile-link" : ""}`}>
+            {profile.name}
+          </a>
+
+          <span className="block mt-[2px] opacity-40 w-[80%] truncate-lines">{profile.title}</span>
         </div>
         <span className="w-[80%] truncate-lines">{profile.company}</span>
       </div>

@@ -85,6 +85,22 @@ span.truncate-lines {
   opacity: .3;
 }
 
+.profile-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 1.5px;
+  bottom: 2px;
+  z-index: 1;
+  background-color: black;
+  width: 0%;
+  transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.profile-link:hover.profile-link::after {
+  width: 100%;
+}
+
 /* added profile card end */
 
 /* status icon styles */

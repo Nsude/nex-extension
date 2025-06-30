@@ -9,6 +9,10 @@ interface Props {
   profile: Profile | null;
 }
 
+// const addedProfiles:Profile[] = [
+//   {name: "Meshach Nsude", id: 1, title: "Frontend Developer & Designer", company: "creaition", link: ''}
+// ]
+
 const MainWrapper = ({ selectedTab, profile }: Props) => {
   const [addedProfiles, setAddedProfiles] = useState<Profile[]>([]);
   const [status, setStatus] = useState({ isLoading: false, isComplete: false });
@@ -114,6 +118,7 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
             <ProfileCard
               profile={profile}
               isLoading={status.isLoading}
+              selectedTab={selectedTab}
               isComplete={status.isComplete} />
 
             <span className="absolute bottom-[20px] left-[20px]">
@@ -142,11 +147,12 @@ const MainWrapper = ({ selectedTab, profile }: Props) => {
         addedProfiles.length > 0 ? (
           <div className="flex flex-col gap-y-[20px] w-full h-[258px] overflow-y-scroll">
             {addedProfiles.slice().reverse().map((item, i) => (
-              <div className="relative mt-[20px] cursor-pointer added-profile-card min-h-fit overflow-x-clip"
+              <div className="relative mt-[20px] added-profile-card min-h-fit overflow-x-clip"
                 key={'profile_' + (i + 1)}>
                 <div data-index={i} className="profile-container">
                   <ProfileCard
                     profile={item}
+                    selectedTab={selectedTab}
                     isLoading={status.isLoading}
                     isComplete={status.isComplete} />
                 </div>

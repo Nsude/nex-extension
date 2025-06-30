@@ -9,6 +9,7 @@ export interface Profile {
   name: string;
   title: string;
   company: string;
+  link: string;
   id: number;
 }
 

@@ -11,6 +11,15 @@ body {
     font-size: 14px;
 }
 
+a, a:active, a:visited, a:hover {
+    color: black;
+}
+
+::selection {
+    background-color: black;
+    color: var(--color-lightGray);
+}
+
 button {
     cursor: pointer;
 }

@@ -8,7 +8,7 @@ declare global {
   function detectProfileType(): 1 | 2 | null;
   function isElemFirstChildTypeSpan(elem: Element | null): boolean | undefined;
   function checkElem():boolean;
-  function runAfterLoad(callback: () => void):any;
+  function runAfterLoad(callback: () => void):void;
   const linkedInExperinceParentClass: string;
 }
 
@@ -26,6 +26,7 @@ declare global {
     const name = cleanRawName(rawName);
     let company: string | null = null;
     let title: string | null = null;
+    const link = window.location.href;
   
     if (type === 1) {
       // type1: legacy style experience list i.e those without bullet points for the work experience itself
@@ -38,7 +39,7 @@ declare global {
       title = getCurrentTitleType2();
     }
   
-    return { name, title, company };
+    return { name, title, company, link };
   };
   
   // type 1 title
