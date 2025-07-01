@@ -32,8 +32,8 @@ const ProfileCard = ({ profile, isLoading, isComplete, selectedTab }: ProfilePro
 
       <div className="flex flex-col leading-[1] w-full">
         <div className="mb-[8px]">
-          <a href={profile.link} target="_blank"
-            className={`w-[80%] relative truncate-lines ${selectedTab.toLowerCase() === "added" ? "profile-link" : ""}`}>
+          <a href={selectedTab.toLowerCase() === "added" ? profile.link : ''} target="_blank"
+            className={`w-[80%] cursor-default relative truncate-lines ${selectedTab.toLowerCase() === "added" ? "profile-link" : ""}`}>
             {profile.name}
           </a>
 

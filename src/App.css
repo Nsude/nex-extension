@@ -85,6 +85,10 @@ span.truncate-lines {
   opacity: .3;
 }
 
+a.profile-link {
+  cursor: pointer;
+}
+
 .profile-link::after {
   content: "";
   position: absolute;
